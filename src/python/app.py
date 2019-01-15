@@ -3,7 +3,7 @@ import logging
 from kafka import KafkaConsumer
  
 def createLogger(category):
-    logger = logging.getLogger('kafka_logger')
+    logger = logging.getLogger(category)
     handler = logging.StreamHandler()
     formatter = logging.Formatter(
         '%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s')
