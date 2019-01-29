@@ -1,0 +1,33 @@
+{
+  "name": "node-dummy",
+  "version": "1.0.0",
+  "description": "Playground for experimental features for the warning sytem",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "jasmine",
+    "start": "node .",
+    "lint": "eslint src/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/warnsystem/node-dummy.git"
+  },
+  "keywords": [
+    "Nodejs",
+    "SocketIO"
+  ],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/warnsystem/node-dummy#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "kafka-node": "^4.0.0",
+    "morgan": "^1.9.1",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "jasmine": "^3.3.1",
+    "supertest": "^3.4.2"
+  }
+}

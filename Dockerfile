@@ -1,5 +1,11 @@
-FROM python:3.7.2-alpine
-COPY ./src/python /code
+FROM node:11
 WORKDIR /code
-RUN pip install -r requirements.txt
-CMD ["python", "app.py"]
+
+ENV NODE_ENV=production
+
+COPY package*.json ./
+RUN npm install --only=production
+
+COPY . .
+
+CMD [ "npm", "start" ]
