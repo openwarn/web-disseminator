@@ -7,7 +7,6 @@ const ConfigurationService = require('./services/configuration.service');
 const kafka = require('kafka-node');
 const environment = require('process').env;
 
-const indexRouterFactory = require('./routes/index');
 const healthRouterFactory = require('./routes/health');
 const defaults = require('./defaults');
 
@@ -15,21 +14,14 @@ const defaults = require('./defaults');
 const configurationService = new ConfigurationService(defaults, environment);
 const config = configurationService.loadConfiguration();
 
-function createKafkaListenerFunction(socket) {
-  return () => {
-    socket.emit('message', 'jackbird')
-    console.log('kafka listener called');
-  };
-}
-
-function initKafkaConsumer() {
+function buildKafkaAlertConsumer() {
   console.info('Consumer is connecting to kafka at:', config.KAFKA_HOST);
   const kafkaClient = new kafka.KafkaClient({kafkaHost: config.KAFKA_HOST});
   const kafkaConsumer = new kafka.Consumer(
     kafkaClient,
     [
         { 
-          topic: 'birds' 
+          topic: 'alert' 
         }
     ],
     {
@@ -40,24 +32,16 @@ function initKafkaConsumer() {
   return kafkaConsumer;
 }
 
-function initWebsocket(server, kafkaConsumer) {
+function buildAlertMulticasterWebsocket(server) {
   const io = socketIO(server);
   // A client has connected to our websocket
   io.on('connection', (socket) => {
     // TODO: Authentication https://socket.io/docs/client-api/
-    console.log('a user connected');
-    const listenerFunction = createKafkaListenerFunction(socket);
-    kafkaConsumer.on('message', listenerFunction);
+    console.log('Websocket', 'client joined');
 
     socket.on('disconnect', () => {
-      console.log('user disconnected');
-      kafkaConsumer.removeListener("message", listenerFunction);
+      console.log('Websocket', 'client disconnected');
     });
-  
-    socket.on('birds', (bird) => {
-      console.log('bird arrived', bird);
-    });
-
   });
 
   return io;
@@ -74,11 +58,15 @@ function startApp() {
 
   app.use(requestLogger('dev'));
 
-  const kafkaConsumer = initKafkaConsumer();
-  const io = initWebsocket(server, kafkaConsumer);
+  const multicaster = buildAlertMulticasterWebsocket(server);
+
+  const kafkaAlertConsumer = buildKafkaAlertConsumer();
+  kafkaAlertConsumer.on('message', (alert) => {
+    multicaster.emit('alert', alert);
+    console.info('Websocket', 'alert emitted');
+  });
 
   // Routes
-  app.use('/', indexRouterFactory(io));
   app.use('/health', healthRouterFactory());
 
   return app;
