@@ -10,11 +10,13 @@ const environment = require('process').env;
 const healthRouterFactory = require('./routes/health');
 const defaults = require('./defaults');
 
-// Get configuration / environment variables
-const configurationService = new ConfigurationService(defaults, environment);
-const config = configurationService.loadConfiguration();
+function buildConfig(defaultConfig, env) {
+  const configurationService = new ConfigurationService(defaultConfig, env);
 
-function buildKafkaAlertConsumer() {
+  return configurationService.loadConfiguration();
+}
+
+function buildKafkaAlertConsumer(config) {
   console.info('Consumer is connecting to kafka at:', config.KAFKA_HOST);
   const kafkaClient = new kafka.KafkaClient({kafkaHost: config.KAFKA_HOST});
   const kafkaConsumer = new kafka.Consumer(
@@ -48,6 +50,7 @@ function buildAlertMulticasterWebsocket(server) {
 }
 
 function startApp() {
+  const config = buildConfig(defaults, environment);
 
   const app = express();
   const server = http.Server(app);
@@ -60,7 +63,7 @@ function startApp() {
 
   const multicaster = buildAlertMulticasterWebsocket(server);
 
-  const kafkaAlertConsumer = buildKafkaAlertConsumer();
+  const kafkaAlertConsumer = buildKafkaAlertConsumer(config);
   kafkaAlertConsumer.on('message', (alert) => {
     multicaster.emit('alert', alert);
     console.info('Websocket', 'alert emitted');
