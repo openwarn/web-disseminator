@@ -6,6 +6,9 @@ const requestLogger = require('morgan');
 const ConfigurationService = require('./services/configuration.service');
 const kafka = require('kafka-node');
 const environment = require('process').env;
+// Security
+const helmet = require('helmet');
+const cors = require('cors');
 
 const healthRouterFactory = require('./routes/health');
 const defaults = require('./defaults');
@@ -60,6 +63,9 @@ function startApp() {
   });
 
   app.use(requestLogger('dev'));
+  app.use(helmet());
+  app.use(helmet.noCache());
+  app.use(cors());
 
   const multicaster = buildAlertMulticasterWebsocket(server);
 
