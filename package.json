@@ -1,7 +1,7 @@
 {
-  "name": "node-dummy",
+  "name": "web-disseminator",
   "version": "1.0.0",
-  "description": "Playground for experimental features for the warning sytem",
+  "description": "Delivers alerts to clients connected via websocket",
   "main": "src/main.js",
   "scripts": {
     "test": "jasmine",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/warnsystem/node-dummy.git"
+    "url": "git+ssh://git@bitbucket.org/warnsystem/web-disseminator.git"
   },
   "keywords": [
     "Nodejs",
@@ -18,7 +18,7 @@
   ],
   "author": "",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/warnsystem/node-dummy#readme",
+  "homepage": "https://bitbucket.org/warnsystem/web-disseminator#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.16.4",
