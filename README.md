@@ -27,9 +27,8 @@ docker build -t web-disseminator .
 ## Run
 
 ```bash
-docker run -p 9305:9301 --env FEED_URL="http://example.org/alerts/feed/atom" web-disseminator
+docker run -p 9305:9301 --env KAFKA_HOST="localhost:9092" web-disseminator
 ```
-
 
 ## Configuration
 
